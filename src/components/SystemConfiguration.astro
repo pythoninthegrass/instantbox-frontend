@@ -1,0 +1,69 @@
+---
+import { Divider, Form } from 'antd';
+import { FormItem } from 'antd/lib/form';
+
+const customLabel = (title) => (
+  <span style={{ display: "inline-block", width: 110, textAlign: "right" }}>
+    {title}
+  </span>
+);
+
+const formItemLayout = {
+  labelCol: { span: 12 },
+  wrapperCol: { span: 12 }
+};
+
+export interface Props {
+  system: string;
+  version: string;
+  cpu: string;
+  mem: string;
+  timeout: string | number;
+  innerPort: string;
+  externalPort?: string | number;
+  showInnerPort?: boolean;
+  showExternalPort?: boolean;
+}
+
+const {
+  system,
+  version,
+  cpu,
+  mem,
+  timeout,
+  innerPort,
+  externalPort,
+  showInnerPort = false,
+  showExternalPort = false
+} = Astro.props;
+---
+
+<Form>
+  <FormItem label={customLabel('OS')} {...formItemLayout}>
+    {system}
+    <Divider type="vertical" />
+    {version}
+  </FormItem>
+  <FormItem label={customLabel('Port')} {...formItemLayout}>
+    {innerPort}
+  </FormItem>
+  <FormItem label={customLabel('CPU cores')} {...formItemLayout}>
+    {cpu}
+  </FormItem>
+  <FormItem label={customLabel('Memory')} {...formItemLayout}>
+    {mem} M ({(parseInt(mem) / 1024).toFixed(2)} G)
+  </FormItem>
+  <FormItem label={customLabel('Duration (H)')} {...formItemLayout}>
+    {timeout}
+  </FormItem>
+  {showInnerPort && (
+    <FormItem label={customLabel('Port (internal)')} {...formItemLayout}>
+      {innerPort}
+    </FormItem>
+  )}
+  {showExternalPort && (
+    <FormItem label={customLabel('Port (public)')} {...formItemLayout}>
+      {externalPort}
+    </FormItem>
+  )}
+</Form>

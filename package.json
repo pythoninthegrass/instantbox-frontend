@@ -2,38 +2,23 @@
   "name": "instantbox",
   "version": "0.2.0",
   "private": true,
-  "engines": {
-    "node": ">= 10.15.2",
-    "npm": ">= 6.8.0"
+  "scripts": {
+    "dev": "dotenv -- astro dev",
+    "start": "dotenv -- astro dev",
+    "build": "dotenv -- astro build",
+    "preview": "dotenv -- astro preview"
   },
   "dependencies": {
-    "antd": "^3.13.6",
-    "axios": "^0.18.0",
-    "classnames": "^2.2.6",
-    "i18next": "^15.0.5",
-    "node-sass": "^4.11.0",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3",
-    "react-i18next": "^10.2.0",
-    "react-loading-screen": "0.0.17",
-    "react-scripts": "2.1.5",
-    "typed.js": "^2.0.10"
+    "antd": "^5.21.2",
+    "axios": "^1.7.7",
+    "typed.js": "^2.1.0",
+    "@astrojs/svelte": "^3.1.1",
+    "svelte": "^3.54.0"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "devDependencies": {
+    "astro": "^2.10.15",
+    "dotenv": "^16.0.3",
+    "dotenv-cli": "^7.2.1",
+    "sass": "^1.79.4"
+  }
 }

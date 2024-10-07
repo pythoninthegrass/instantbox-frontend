@@ -1,0 +1,62 @@
+---
+import { Form, Input } from "antd";
+const { Item: FormItem } = Form;
+
+const formItemLayout = {
+    labelCol: { span: 10 },
+    wrapperCol: { span: 14 },
+};
+---
+
+<Form layout="horizontal">
+    <FormItem label="Port" {...formItemLayout}>
+        <Input
+            style={{ width: 200 }}
+            placeholder="e.g. 80"
+            name="port"
+            defaultValue="80"
+        />
+    </FormItem>
+    <FormItem label="CPU cores" {...formItemLayout}>
+        <Input
+            style={{ width: 200 }}
+            placeholder="e.g. 1"
+            name="cpu"
+            defaultValue="1"
+        />
+    </FormItem>
+    <FormItem label="Memory (M)" {...formItemLayout}>
+        <Input
+            style={{ width: 200 }}
+            placeholder="e.g. 512"
+            name="mem"
+            defaultValue="512"
+        />
+    </FormItem>
+    <FormItem label="Duration (H)" {...formItemLayout}>
+        <Input
+            style={{ width: 200 }}
+            placeholder="e.g. 24"
+            name="timeout"
+            defaultValue="24"
+        />
+    </FormItem>
+</Form>
+
+<script>
+    const form = document.querySelector("form");
+    if (form) {
+        form.addEventListener("change", (event) => {
+            const target = event.target as HTMLInputElement;
+            if (target.name) {
+                // Update the formValues in the parent component
+                const customEvent = new CustomEvent("formChange", {
+                    detail: { [target.name]: target.value },
+                    bubbles: true,
+                    composed: true,
+                });
+                form.dispatchEvent(customEvent);
+            }
+        });
+    }
+</script>

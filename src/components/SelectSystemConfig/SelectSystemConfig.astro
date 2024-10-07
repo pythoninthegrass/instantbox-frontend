@@ -1,0 +1,80 @@
+---
+import { Steps, Divider, Select, Button, Card } from "antd";
+import SelectForm from "./SelectForm.astro";
+
+const { Step } = Steps;
+const { Option } = Select;
+
+const { osList } = Astro.props;
+---
+
+<div class="select-system-config">
+    <div>
+        <Steps current={0}>
+            <Step title="OS" description="Choose OS" />
+            <Step title="Resources" description="Choose resources" />
+        </Steps>
+    </div>
+
+    <Divider />
+
+    <div class="select-system-config__step-content">
+        {
+            osList.map((item) => (
+                <Card
+                    key={item.label}
+                    style={{ width: 200, margin: "10px 25px" }}
+                >
+                    <div style={{ textAlign: "center" }}>{item.label}</div>
+                    <img
+                        style={{
+                            display: "block",
+                            width: 120,
+                            height: 120,
+                            margin: "0 auto",
+                        }}
+                        src={item.logoUrl}
+                        alt={item.label}
+                    />
+                    <Select
+                        style={{ width: 182, marginTop: 10 }}
+                        placeholder="Choose OS version"
+                    >
+                        {item.subList.map((subItem) => (
+                            <Option key={subItem.label} value={subItem.osCode}>
+                                {subItem.label}
+                            </Option>
+                        ))}
+                    </Select>
+                </Card>
+            ))
+        }
+    </div>
+    <SelectForm />
+    <div class="select-system-config__steps-action">
+        <Button type="primary" id="create-button">Create</Button>
+    </div>
+</div>
+
+<script>
+    const createButton = document.getElementById("create-button");
+    if (createButton) {
+        createButton.addEventListener("click", () => {
+            const form = document.querySelector("form");
+            const formData = form ? new FormData(form) : undefined;
+            const data = formData ? Object.fromEntries(formData.entries()) : {};
+            const selectElement = document.querySelector("select");
+            const selectedOS = selectElement ? selectElement.value : "";
+            const event = new CustomEvent("create", {
+                detail: { ...data, os: selectedOS },
+                bubbles: true,
+                composed: true,
+            });
+            createButton.dispatchEvent(event);
+        });
+    }
+</script>
+
+<style lang="scss">
+    @import "../styles/SelectSystemConfig.scss";
+</style>

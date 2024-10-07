@@ -1,104 +1,34 @@
-import axios from "axios";
-import { getBaseUrl } from "./util";
+const BASE_URL = import.meta.env.PUBLIC_API_URL || '/v2/superinspire';
 
-axios.defaults.baseURL = getBaseUrl();
-
-axios.interceptors.request.use(
-  function(config) {
-    return config;
-  },
-  function(err) {
-    return Promise.reject(err);
+async function fetchWithErrorHandling(url, options = {}) {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'An error occurred');
   }
-);
+  return response.json();
+}
 
-axios.interceptors.response.use(
-  function(res) {
-    const data = res.data;
-    return data;
-    //// Return error message
-    // if (data.statusCode === 1) {
-    //   return data;
-    // } else {
-    //   throw Error(data.message);
-    // }
-  },
-  function(err) {
-    return Promise.reject(err);
-  }
-);
+export async function getOSList() {
+  return fetchWithErrorHandling(`${BASE_URL}/getOSList`);
+}
 
-/**
- * Allow requests to be cancelled
- * Reference: https://reactjs.org/blog/2015/12/16/ismounted-antipattern.html
- * @param {promise} promise Request
- */
-export const makeCancelable = promise => {
-  let hasCanceled_ = false;
+export async function getOSUrl(os, timeout, cpu = 1, mem = 512, port = 80) {
+  const url = new URL(`${BASE_URL}/getOS`, window.location.origin);
+  url.searchParams.append('os', os);
+  url.searchParams.append('timeout', timeout);
+  url.searchParams.append('cpu', cpu);
+  url.searchParams.append('mem', mem);
+  url.searchParams.append('port', port);
 
-  const wrappedPromise = new Promise((resolve, reject) => {
-    promise.then(
-      val => (hasCanceled_ ? reject({ isCanceled: true }) : resolve(val)),
-      error => (hasCanceled_ ? reject({ isCanceled: true }) : reject(error))
-    );
-  });
-  return {
-    promise: wrappedPromise,
-    cancel() {
-      hasCanceled_ = true;
-    }
-  };
-};
+  return fetchWithErrorHandling(url.toString());
+}
 
-/*
- * Available API endpoints
- */
-const apiVersion = "/v2/superinspire";
-const requestUrlList = {
-  getOSList: `${apiVersion}/getOSList`,
-  getOS: `${apiVersion}/getOS`,
-  rmOS: `${apiVersion}/rmOS`
-};
+export async function removeContainerById(containerId, shareUrl, timestamp = Math.floor(Date.now() / 1000)) {
+  const url = new URL(`${BASE_URL}/rmOS`, window.location.origin);
+  url.searchParams.append('containerId', containerId);
+  url.searchParams.append('shareUrl', shareUrl);
+  url.searchParams.append('timestamp', timestamp);
 
-/**
- * Fetch OS list
- */
-export const getOSList = () => {
-  return makeCancelable(axios.get(requestUrlList.getOSList));
-};
-
-/**
- * Create container
- */
-export const getOSUrl = (osCode, timeout, cpu = 1, mem = 0.5, port = 80) => {
-  return makeCancelable(
-    axios.get(requestUrlList.getOS, {
-      params: {
-        os: osCode,
-        timeout,
-        cpu,
-        mem,
-        port
-      }
-    })
-  );
-};
-
-/**
- * Remove container
- */
-export const removeContainerById = (
-  containerId,
-  shareUrl,
-  timestamp = Math.floor(new Date().getTime() / 1000)
-) => {
-  return makeCancelable(
-    axios.get(requestUrlList.rmOS, {
-      params: {
-        containerId,
-        shareUrl,
-        timestamp
-      }
-    })
-  );
-};
+  return fetchWithErrorHandling(url.toString());
+}

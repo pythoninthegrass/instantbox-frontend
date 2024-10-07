@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SelectSystemConfig from "../components/SelectSystemConfig/SelectSystemConfig.astro";
+import SystemConfiguration from "../components/SystemConfiguration.astro";
+import AppLogic from "../components/AppLogic.svelte";
+import "../styles/App.scss";
+
+const osList = await fetch("/api/getOSList").then((res) => res.json());
+---
+
+<Layout title="instantbox">
+    <main>
+        <h1 class="app__title">
+            <span class="app__title-span">instantbox</span>
+        </h1>
+        <div class="app__desc">
+            <div class="app__text-editor-wrap">
+                <div class="app__title-bar">
+                    {osList.map((os) => os.label).join(" / ")}
+                </div>
+                <div class="app__text-body">
+                    <span style="margin-right: 10px">$</span>
+                    <span class="app__desc-content"></span>
+                </div>
+            </div>
+        </div>
+        <AppLogic client:load {osList}>
+            <SelectSystemConfig slot="select-config" />
+            <SystemConfiguration slot="system-config" />
+        </AppLogic>
+    </main>
+</Layout>
+
+<script>
+    import Typed from "typed.js";
+
+    new Typed(".app__desc-content", {
+        strings: [
+            "Want to experiment with something on a Linux distribution? Let's start!",
+        ],
+        typeSpeed: 50,
+    });
+</script>
